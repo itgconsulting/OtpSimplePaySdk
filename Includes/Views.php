@@ -7,7 +7,7 @@
 
 // @codingStandardsIgnoreFile
 
-namespace Itegration\OtpSymplePaySdk\Includes;
+namespace Itegration\OtpSimplePaySdk\Includes;
 
 /**
  * Views

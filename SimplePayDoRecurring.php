@@ -7,11 +7,11 @@
 
 // @codingStandardsIgnoreFile
 
-namespace Itegration\OtpSymplePaySdk;
+namespace Itegration\OtpSimplePaySdk;
 
 /**
  * Class SimplePayDoRecurring
- * @package Itegration\OtpSymplePaySdk
+ * @package Itegration\OtpSimplePaySdk
  */
 class SimplePayDoRecurring extends Base
 {

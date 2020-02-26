@@ -7,11 +7,11 @@
 
 // @codingStandardsIgnoreFile
 
-namespace Itegration\OtpSymplePaySdk;
+namespace Itegration\OtpSimplePaySdk;
 
 /**
  * Class SimplePayCardQuery
- * @package Itegration\OtpSymplePaySdk
+ * @package Itegration\OtpSimplePaySdk
  */
 class SimplePayCardQuery extends Base
 {

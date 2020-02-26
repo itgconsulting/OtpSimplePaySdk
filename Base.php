@@ -7,12 +7,12 @@
 
 // @codingStandardsIgnoreFile
 
-namespace Itegration\OtpSymplePaySdk;
+namespace Itegration\OtpSimplePaySdk;
 
-use Itegration\OtpSymplePaySdk\Includes\Communication;
-use Itegration\OtpSymplePaySdk\Includes\Logger;
-use Itegration\OtpSymplePaySdk\Includes\Signature;
-use Itegration\OtpSymplePaySdk\Includes\Views;
+use Itegration\OtpSimplePaySdk\Includes\Communication;
+use Itegration\OtpSimplePaySdk\Includes\Logger;
+use Itegration\OtpSimplePaySdk\Includes\Signature;
+use Itegration\OtpSimplePaySdk\Includes\Views;
 
 /**
  * Base class for SimplePay implementation

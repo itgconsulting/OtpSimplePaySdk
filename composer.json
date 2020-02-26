@@ -1,0 +1,16 @@
+{
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "itegration/otp_simple_pay_sdk",
+        "version": "dev-master",
+        "source": {
+          "url": "https://github.com/itgconsulting/OtpSymplePaySdk.git",
+          "type": "git",
+          "reference": "master"
+        }
+      }
+    }
+  ]
+}

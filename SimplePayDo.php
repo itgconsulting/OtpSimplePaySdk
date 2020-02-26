@@ -5,13 +5,13 @@
  * @author: Perencz Tamás <tamas.perencz@itegraion.com>
  */
 
-namespace Itegration\OtpSymplePaySdk;
+namespace Itegration\OtpSimplePaySdk;
 
 // @codingStandardsIgnoreFile
 
 /**
  * Class SimplePayDo
- * @package Itegration\OtpSymplePaySdk
+ * @package Itegration\OtpSimplePaySdk
  */
 class SimplePayDo extends Base
 {
