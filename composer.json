@@ -1,16 +1,19 @@
 {
-  "repositories": [
+  "name": "itegration/otp_simple_pay_sdk",
+  "description": "OTP simple pay sdk",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
     {
-      "type": "package",
-      "package": {
-        "name": "itegration/otp_simple_pay_sdk",
-        "version": "dev-master",
-        "source": {
-          "url": "https://github.com/itgconsulting/OtpSymplePaySdk.git",
-          "type": "git",
-          "reference": "master"
-        }
-      }
+      "name": "Itegration",
+      "email": "contact@itegration.com"
     }
-  ]
+  ],
+  "minimum-stability": "stable",
+  "autoload": {
+    "psr-4": {
+      "itegration\\OtpSimplePaySdk\\": "src/"
+    }
+  },
+  "require": {}
 }
