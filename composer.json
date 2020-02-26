@@ -9,10 +9,5 @@
       "email": "contact@itegration.com"
     }
   ],
-  "autoload": {
-    "psr-4": {
-      "itegration\\OtpSimplePaySdk\\": "src/"
-    }
-  },
   "require": {}
 }
