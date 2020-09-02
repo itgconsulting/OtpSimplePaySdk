@@ -30,28 +30,28 @@ class Base
     use Views;
     use Logger;
 
-    public    $config           = [];
-    protected $headers          = [];
-    protected $hashAlgo         = 'sha384';
-    public    $sdkVersion       = 'SimplePay_PHP_SDK_2.0.8_190924';
-    protected $logSeparator     = '|';
-    protected $logContent       = [];
-    protected $debugMessage     = [];
+    public $config = [];
+    protected $headers = [];
+    protected $hashAlgo = 'sha384';
+    public $sdkVersion = 'SimplePay_PHP_SDK_2.1.0_200825';
+    protected $logSeparator = '|';
+    protected $logContent = [];
+    protected $debugMessage = [];
     protected $currentInterface = '';
-    protected $api              = [
+    protected $api = [
         'sandbox' => 'https://sandbox.simplepay.hu/payment',
-        'live'    => 'https://secure.simplepay.hu/payment',
+        'live' => 'https://secure.simplepay.hu/payment'
     ];
-    protected $apiInterface     = [
-        'start'  => '/v2/start',
+    protected $apiInterface = [
+        'start' => '/v2/start',
         'finish' => '/v2/finish',
         'refund' => '/v2/refund',
-        'query'  => '/v2/query',
+        'query' => '/v2/query',
     ];
-    public    $logTransactionId = 'N/A';
-    public    $logOrderRef      = 'N/A';
-    public    $logPath          = '';
-    protected $phpVersion       = 7;
+    public $logTransactionId = 'N/A';
+    public $logOrderRef = 'N/A';
+    public $logPath = '';
+    protected $phpVersion = 7;
 
     /**
      * Constructor
@@ -62,14 +62,16 @@ class Base
     {
         $this->logContent['runMode'] = strtoupper($this->currentInterface);
         $ver = (float)phpversion();
-        $this->logContent['PHP'] = $ver;
-        if ($ver < 7.0) {
-            $this->phpVersion = 5;
+        $this->logContent['phpVersion'] = $ver;
+        if (is_numeric($ver)) {
+            if ($ver < 7.0) {
+                $this->phpVersion = 5;
+            }
         }
     }
 
     /**
-     * Add uniq config field
+     * Add unique config field
      *
      * @param string $key   Config field name
      * @param string $value Vonfig field value
@@ -141,12 +143,12 @@ class Base
     public function addItems($itemData = [])
     {
         $item = [
-            'ref'         => '',
-            'title'       => '',
+            'ref' => '',
+            'title' => '',
             'description' => '',
-            'amount'      => 0,
-            'price'       => 0,
-            'tax'         => 0,
+            'amount' => 0,
+            'price' => 0,
+            'tax' => 0,
         ];
 
         if (!isset($this->transactionBase['items'])) {
@@ -189,7 +191,6 @@ class Base
         return $this->logContent;
     }
 
-    // @codingStandardsIgnoreStart
     /**
      * Check data if JSON, or set data to JSON
      *
@@ -202,29 +203,28 @@ class Base
         $json = '[]';
         //empty
         if ($data === '') {
-            $json = json_encode([]);
+            $json =  json_encode([]);
         }
         //array
         if (is_array($data)) {
-            $json = json_encode($data);
+            $json =  json_encode($data);
         }
         //object
         if (is_object($data)) {
-            $json = json_encode($data);
+            $json =  json_encode($data);
         }
         //json
         $result = @json_decode($data);
         if ($result !== null) {
-            $json = $data;
+            $json =  $data;
         }
         //serialized
         $result = @unserialize($data);
         if ($result !== false) {
-            $json = json_encode($result);
+            $json =  json_encode($result);
         }
         return $json;
     }
-    // @codingStandardsIgnoreEnd
 
     /**
      * Serves header array
@@ -255,7 +255,7 @@ class Base
     {
         $saltBase = '';
         $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for ($i = 1; $i < $length; $i++) {
+        for ($i=0; $i <= $length; $i++) {
             $saltBase .= substr($chars, rand(1, strlen($chars)), 1);
         }
         return hash('md5', $saltBase);
@@ -285,7 +285,7 @@ class Base
     protected function convertToArray($obj)
     {
         if (is_object($obj)) {
-            $obj = (array)$obj;
+            $obj = (array) $obj;
         }
         $new = $obj;
         if (is_array($obj)) {
@@ -328,7 +328,7 @@ class Base
      */
     protected function setConfig()
     {
-        if (isset($this->transactionBase['currency']) && $this->transactionBase['currency'] != '') {
+        if (isset($this->transactionBase['currency'])  && $this->transactionBase['currency'] != '') {
             $this->config['merchant'] = $this->config[$this->transactionBase['currency'] . '_MERCHANT'];
             $this->config['merchantKey'] = $this->config[$this->transactionBase['currency'] . '_SECRET_KEY'];
         } elseif (isset($this->config['merchantAccount'])) {
@@ -347,10 +347,21 @@ class Base
         if ($this->config['SANDBOX']) {
             $this->config['api'] = 'sandbox';
         }
+        $this->logContent['environment'] = strtoupper($this->config['api']);
+
+        $this->config['logger'] = false;
+        if (isset($this->config['LOGGER'])) {
+            $this->config['logger'] = $this->config['LOGGER'];
+        }
 
         $this->config['logPath'] = 'log';
-        if ($this->config['SANDBOX']) {
+        if (isset($this->config['LOG_PATH'])) {
             $this->config['logPath'] = $this->config['LOG_PATH'];
+        }
+
+        $this->config['autoChallenge'] = false;
+        if (isset($this->config['AUTOCHALLENGE'])) {
+            $this->config['autoChallenge'] = $this->config['AUTOCHALLENGE'];
         }
     }
 
@@ -383,18 +394,16 @@ class Base
     protected function execApiCall()
     {
         $this->prepare();
-
         $transaction = [];
 
-        $this->logContent['callState2'] = 'RUN';
+        $this->logContent['callState2'] = 'REQUEST';
         $this->logContent['sendApiUrl'] = $this->config['apiUrl'];
         $this->logContent['sendContent'] = $this->content;
         $this->logContent['sendSignature'] = $this->config['computedHash'];
 
-
         $commRresult = $this->runCommunication($this->config['apiUrl'], $this->content, $this->headers);
 
-        $this->logContent['callState3'] = 'RESPONSE';
+        $this->logContent['callState3'] = 'RESULT';
 
         //call result
         $result = explode("\r\n", $commRresult);

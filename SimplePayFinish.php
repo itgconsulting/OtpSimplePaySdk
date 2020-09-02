@@ -21,15 +21,15 @@ namespace Itegration\OtpSimplePaySdk;
 class SimplePayFinish extends Base
 {
     protected $currentInterface = 'finish';
-    protected $returnData       = [];
-    public    $transactionBase  = [
-        'salt'          => '',
-        'merchant'      => '',
-        'orderRef'      => '',
+    protected $returnData = [];
+    public $transactionBase = [
+        'salt' => '',
+        'merchant' => '',
+        'orderRef' => '',
         'transactionId' => '',
         'originalTotal' => '',
-        'approveTotal'  => '',
-        'currency'      => '',
+        'approveTotal' => '',
+        'currency' => '',
     ];
 
     /**

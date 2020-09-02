@@ -21,11 +21,10 @@ namespace Itegration\OtpSimplePaySdk;
 class SimplePayQuery extends Base
 {
     protected $currentInterface = 'query';
-    protected $returnData       = [];
-    protected $transactionBase  = [
-        'salt'     => '',
-        'merchant' => '',
-        'currency' => '',
+    protected $returnData = [];
+    protected $transactionBase = [
+        'salt' => '',
+        'merchant' => ''
     ];
 
     /**

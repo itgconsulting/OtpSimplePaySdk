@@ -21,18 +21,18 @@ namespace Itegration\OtpSimplePaySdk;
 class SimplePayBack extends Base
 {
     protected $currentInterface = 'back';
-    protected $notification     = [];
-    public    $request          = [
+    protected $notification = [];
+    public $request = [
         'rRequest' => '',
         'sRequest' => '',
-        'rJson'    => '',
+        'rJson' => '',
         'rContent' => [
             'r' => 'N/A',
             't' => 'N/A',
             'e' => 'N/A',
             'm' => 'N/A',
             'o' => 'N/A',
-        ],
+        ]
     ];
 
     /**

@@ -1,6 +1,7 @@
 <?php
+
 /**
- *  Copyright (C) 2019 OTP Mobil Kft.
+ *  Copyright (C) 2020 OTP Mobil Kft.
  *
  *  PHP version 7
  *
@@ -20,7 +21,7 @@
  * @category  SDK
  * @package   SimplePayV2
  * @author    SimplePay IT Support <itsupport@otpmobil.com>
- * @copyright 2019 OTP Mobil Kft.
+ * @copyright 2020 OTP Mobil Kft.
  * @license   http://www.gnu.org/licenses/gpl-3.0.html  GNU GENERAL PUBLIC LICENSE (GPL V3.0)
  * @link      http://simplepartner.hu/online_fizetesi_szolgaltatas.html
  */
@@ -43,28 +44,28 @@ class Base
     use Views;
     use Logger;
 
-    public    $config           = [];
-    protected $headers          = [];
-    protected $hashAlgo         = 'sha384';
-    public    $sdkVersion       = 'SimplePay_PHP_SDK_2.0.8_190924';
-    protected $logSeparator     = '|';
-    protected $logContent       = [];
-    protected $debugMessage     = [];
+    public $config = [];
+    protected $headers = [];
+    protected $hashAlgo = 'sha384';
+    public $sdkVersion = 'SimplePay_PHP_SDK_2.1.0_200825';
+    protected $logSeparator = '|';
+    protected $logContent = [];
+    protected $debugMessage = [];
     protected $currentInterface = '';
-    protected $api              = [
+    protected $api = [
         'sandbox' => 'https://sandbox.simplepay.hu/payment',
-        'live'    => 'https://secure.simplepay.hu/payment',
+        'live' => 'https://secure.simplepay.hu/payment'
     ];
-    protected $apiInterface     = [
-        'start'  => '/v2/start',
+    protected $apiInterface = [
+        'start' => '/v2/start',
         'finish' => '/v2/finish',
         'refund' => '/v2/refund',
-        'query'  => '/v2/query',
+        'query' => '/v2/query',
     ];
-    public    $logTransactionId = 'N/A';
-    public    $logOrderRef      = 'N/A';
-    public    $logPath          = '';
-    protected $phpVersion       = 7;
+    public $logTransactionId = 'N/A';
+    public $logOrderRef = 'N/A';
+    public $logPath = '';
+    protected $phpVersion = 7;
 
     /**
      * Constructor
@@ -75,14 +76,16 @@ class Base
     {
         $this->logContent['runMode'] = strtoupper($this->currentInterface);
         $ver = (float)phpversion();
-        $this->logContent['PHP'] = $ver;
-        if ($ver < 7.0) {
-            $this->phpVersion = 5;
+        $this->logContent['phpVersion'] = $ver;
+        if (is_numeric($ver)) {
+            if ($ver < 7.0) {
+                $this->phpVersion = 5;
+            }
         }
     }
 
     /**
-     * Add uniq config field
+     * Add unique config field
      *
      * @param string $key   Config field name
      * @param string $value Vonfig field value
@@ -154,12 +157,12 @@ class Base
     public function addItems($itemData = [])
     {
         $item = [
-            'ref'         => '',
-            'title'       => '',
+            'ref' => '',
+            'title' => '',
             'description' => '',
-            'amount'      => 0,
-            'price'       => 0,
-            'tax'         => 0,
+            'amount' => 0,
+            'price' => 0,
+            'tax' => 0,
         ];
 
         if (!isset($this->transactionBase['items'])) {
@@ -214,25 +217,25 @@ class Base
         $json = '[]';
         //empty
         if ($data === '') {
-            $json = json_encode([]);
+            $json =  json_encode([]);
         }
         //array
         if (is_array($data)) {
-            $json = json_encode($data);
+            $json =  json_encode($data);
         }
         //object
         if (is_object($data)) {
-            $json = json_encode($data);
+            $json =  json_encode($data);
         }
         //json
         $result = @json_decode($data);
         if ($result !== null) {
-            $json = $data;
+            $json =  $data;
         }
         //serialized
         $result = @unserialize($data);
         if ($result !== false) {
-            $json = json_encode($result);
+            $json =  json_encode($result);
         }
         return $json;
     }
@@ -266,7 +269,7 @@ class Base
     {
         $saltBase = '';
         $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-        for ($i = 1; $i < $length; $i++) {
+        for ($i=0; $i <= $length; $i++) {
             $saltBase .= substr($chars, rand(1, strlen($chars)), 1);
         }
         return hash('md5', $saltBase);
@@ -296,7 +299,7 @@ class Base
     protected function convertToArray($obj)
     {
         if (is_object($obj)) {
-            $obj = (array)$obj;
+            $obj = (array) $obj;
         }
         $new = $obj;
         if (is_array($obj)) {
@@ -339,7 +342,7 @@ class Base
      */
     protected function setConfig()
     {
-        if (isset($this->transactionBase['currency']) && $this->transactionBase['currency'] != '') {
+        if (isset($this->transactionBase['currency'])  && $this->transactionBase['currency'] != '') {
             $this->config['merchant'] = $this->config[$this->transactionBase['currency'] . '_MERCHANT'];
             $this->config['merchantKey'] = $this->config[$this->transactionBase['currency'] . '_SECRET_KEY'];
         } elseif (isset($this->config['merchantAccount'])) {
@@ -358,10 +361,21 @@ class Base
         if ($this->config['SANDBOX']) {
             $this->config['api'] = 'sandbox';
         }
+        $this->logContent['environment'] = strtoupper($this->config['api']);
+
+        $this->config['logger'] = false;
+        if (isset($this->config['LOGGER'])) {
+            $this->config['logger'] = $this->config['LOGGER'];
+        }
 
         $this->config['logPath'] = 'log';
-        if ($this->config['SANDBOX']) {
+        if (isset($this->config['LOG_PATH'])) {
             $this->config['logPath'] = $this->config['LOG_PATH'];
+        }
+
+        $this->config['autoChallenge'] = false;
+        if (isset($this->config['AUTOCHALLENGE'])) {
+            $this->config['autoChallenge'] = $this->config['AUTOCHALLENGE'];
         }
     }
 
@@ -396,14 +410,14 @@ class Base
         $this->prepare();
         $transaction = [];
 
-        $this->logContent['callState2'] = 'RUN';
+        $this->logContent['callState2'] = 'REQUEST';
         $this->logContent['sendApiUrl'] = $this->config['apiUrl'];
         $this->logContent['sendContent'] = $this->content;
         $this->logContent['sendSignature'] = $this->config['computedHash'];
 
         $commRresult = $this->runCommunication($this->config['apiUrl'], $this->content, $this->headers);
 
-        $this->logContent['callState3'] = 'RESPONSE';
+        $this->logContent['callState3'] = 'RESULT';
 
         //call result
         $result = explode("\r\n", $commRresult);
@@ -462,15 +476,13 @@ class Base
 class SimplePayStart extends Base
 {
     protected $currentInterface = 'start';
-    public    $transactionBase  = [
-        'salt'          => '',
-        'merchant'      => '',
-        'orderRef'      => '',
-        'currency'      => '',
-        'customerEmail' => '',
-        'language'      => '',
-        'sdkVersion'    => '',
-        'methods'       => [],
+    public $transactionBase = [
+        'salt' => '',
+        'merchant' => '',
+        'orderRef' => '',
+        'currency' => '',
+        'sdkVersion' => '',
+        'methods' => [],
     ];
 
     /**
@@ -498,18 +510,18 @@ class SimplePayStart extends Base
 class SimplePayBack extends Base
 {
     protected $currentInterface = 'back';
-    protected $notification     = [];
-    public    $request          = [
+    protected $notification = [];
+    public $request = [
         'rRequest' => '',
         'sRequest' => '',
-        'rJson'    => '',
+        'rJson' => '',
         'rContent' => [
             'r' => 'N/A',
             't' => 'N/A',
             'e' => 'N/A',
             'm' => 'N/A',
             'o' => 'N/A',
-        ],
+        ]
     ];
 
     /**
@@ -591,12 +603,12 @@ class SimplePayBack extends Base
 class SimplePayIpn extends Base
 {
     protected $currentInterface = 'ipn';
-    protected $returnData       = [];
-    protected $receiveDate      = '';
-    protected $ipnContent       = [];
-    protected $responseContent  = '';
-    protected $ipnReturnData    = [];
-    public    $validationResult = false;
+    protected $returnData = [];
+    protected $receiveDate = '';
+    protected $ipnContent = [];
+    protected $responseContent = '';
+    protected $ipnReturnData = [];
+    public $validationResult = false;
 
     /**
      * IPN validation
@@ -643,7 +655,6 @@ class SimplePayIpn extends Base
 
         $this->logTransactionId = $this->ipnContent['transactionId'];
         $this->logOrderRef = $this->ipnContent['orderRef'];
-        $this->writeLog(['validationResult' => $this->validationResult]);
 
         foreach ($this->ipnContent as $contentKey => $contentValue) {
             $this->logContent[$contentKey] = $contentValue;
@@ -701,7 +712,6 @@ class SimplePayIpn extends Base
         $this->writeLog(['ipnConfirm' => 'ipnReturnData provided as content by getIpnConfirmContent']);
         return $this->ipnReturnData;
     }
-
 }
 
 
@@ -717,11 +727,10 @@ class SimplePayIpn extends Base
 class SimplePayQuery extends Base
 {
     protected $currentInterface = 'query';
-    protected $returnData       = [];
-    protected $transactionBase  = [
-        'salt'     => '',
-        'merchant' => '',
-        'currency' => '',
+    protected $returnData = [];
+    protected $transactionBase = [
+        'salt' => '',
+        'merchant' => ''
     ];
 
     /**
@@ -778,13 +787,13 @@ class SimplePayQuery extends Base
 class SimplePayRefund extends Base
 {
     protected $currentInterface = 'refund';
-    protected $returnData       = [];
-    public    $transactionBase  = [
-        'salt'          => '',
-        'merchant'      => '',
-        'orderRef'      => '',
+    protected $returnData = [];
+    public $transactionBase = [
+        'salt' => '',
+        'merchant' => '',
+        'orderRef' => '',
         'transactionId' => '',
-        'currency'      => '',
+        'currency' => '',
     ];
 
     /**
@@ -819,15 +828,15 @@ class SimplePayRefund extends Base
 class SimplePayFinish extends Base
 {
     protected $currentInterface = 'finish';
-    protected $returnData       = [];
-    public    $transactionBase  = [
-        'salt'          => '',
-        'merchant'      => '',
-        'orderRef'      => '',
+    protected $returnData = [];
+    public $transactionBase = [
+        'salt' => '',
+        'merchant' => '',
+        'orderRef' => '',
         'transactionId' => '',
         'originalTotal' => '',
-        'approveTotal'  => '',
-        'currency'      => '',
+        'approveTotal' => '',
+        'currency' => '',
     ];
 
     /**
@@ -968,8 +977,8 @@ trait Communication
         curl_setopt($curlData, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($curlData, CURLOPT_HEADER, true);
         //cURL + SSL
-        //curl_setopt($curlData, CURLOPT_SSL_VERIFYPEER, false);
-        //curl_setopt($curlData, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($curlData, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curlData, CURLOPT_SSL_VERIFYHOST, false);
         $result = curl_exec($curlData);
         $this->result = $result;
         $this->curlInfo = curl_getinfo($curlData);
@@ -998,9 +1007,9 @@ trait Communication
 trait Views
 {
     public $formDetails = [
-        'id'          => 'SimplePayForm',
-        'name'        => 'SimplePayForm',
-        'element'     => 'button',
+        'id' => 'SimplePayForm',
+        'name' => 'SimplePayForm',
+        'element' => 'button',
         'elementText' => 'Start SimplePay Payment',
     ];
 
@@ -1017,17 +1026,17 @@ trait Views
     {
         switch ($submitElement) {
             case 'link':
-                $element = "\n<a href='javascript:document.getElementById(\"" . $formName . "\").submit()'>" . addslashes($submitElementText) . "</a>";
+                $element = "\n<a href='javascript:document.getElementById(\"" . $formName ."\").submit()'>".addslashes($submitElementText)."</a>";
                 break;
             case 'button':
-                $element = "\n<button type='submit'>" . addslashes($submitElementText) . "</button>";
+                $element = "\n<button type='submit'>".addslashes($submitElementText)."</button>";
                 break;
             case 'auto':
-                $element = "\n<button type='submit'>" . addslashes($submitElementText) . "</button>";
+                $element = "\n<button type='submit'>".addslashes($submitElementText)."</button>";
                 $element .= "\n<script language=\"javascript\" type=\"text/javascript\">document.getElementById(\"" . $formName . "\").submit();</script>";
                 break;
             default :
-                $element = "\n<button type='submit'>" . addslashes($submitElementText) . "</button>";
+                $element = "\n<button type='submit'>".addslashes($submitElementText)."</button>";
                 break;
         }
         return $element;
@@ -1089,6 +1098,10 @@ trait Logger
      */
     public function writeLog($log = [])
     {
+        if (!$this->config['logger']) {
+            return false;
+        }
+
         $write = true;
         if (count($log) == 0) {
             $log = $this->logContent;
@@ -1114,10 +1127,6 @@ trait Logger
 
         if ($write) {
             $flat = $this->getFlatArray($log);
-            if (isset($flat['cardSecret'])) {
-                unset($flat['cardSecret']);
-            }
-
             $logText = '';
             foreach ($flat as $key => $value) {
                 $logText .= $this->logOrderRef . $this->logSeparator;
@@ -1125,14 +1134,46 @@ trait Logger
                 $logText .= $this->currentInterface . $this->logSeparator;
                 $logText .= $date . $this->logSeparator;
                 $logText .= $key . $this->logSeparator;
-                $logText .= $value . "\n";
+                $logText .= $this->contentFilter($key, $value) . "\n";
             }
-
             $this->logToFile($logFile, $logText);
             unset($log, $flat, $logText);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Remove card data from log content
+     *
+     * @param string $key   Log data key
+     * @param string $value Log data value
+     *
+     * @return string  $logValue New log value
+     */
+    protected function contentFilter($key = '', $value = '')
+    {
+        $logValue = $value;
+        $filtered = '***';
+        if (in_array($key, ['content', 'sendContent'])) {
+            $contentData = $this->convertToArray(json_decode($value));
+            if (isset($contentData['cardData'])) {
+                foreach (array_keys($contentData['cardData']) as $dataKey) {
+                    $contentData['cardData'][$dataKey] = $filtered;
+                }
+            }
+            if (isset($contentData['cardSecret'])) {
+                $contentData['cardSecret'] = $filtered;
+            }
+            $logValue = json_encode($contentData);
+        }
+        if (strpos($key, 'cardData') !== false) {
+            $logValue = $filtered;
+        }
+        if ($key === 'cardSecret') {
+            $logValue = $filtered;
+        }
+        return $logValue;
     }
 
     /**
@@ -1154,5 +1195,38 @@ trait Logger
         }
         unset($logFile, $logText);
     }
+}
 
+
+/**
+ * Strong Customer Authentication (SCA) -- 3DSecure
+ *
+ * @category SDK
+ * @package  SimplePayV21_SDK
+ * @author   SimplePay IT Support <itsupport@otpmobil.com>
+ * @license  http://www.gnu.org/licenses/gpl-3.0.html  GNU GENERAL PUBLIC LICENSE (GPL V3.0)
+ * @link     http://simplepartner.hu/online_fizetesi_szolgaltatas.html
+ */
+trait Sca
+{
+
+    /**
+     * StartChallenge
+     *
+     * @param array $v2Result Result of API call
+     *
+     * @return boolean        Success of redirection
+     */
+    public function challenge($v2Result = [])
+    {
+        if (isset($v2Result['redirectUrl'])) {
+            $this->returnData['paymentUrl'] = $v2Result['redirectUrl'];
+            $this->getHtmlForm();
+            $this->writeLog(['3DSCheckResult' => 'Card issuer bank wants to identify cardholder (challenge)', '3DSChallengeUrl' => $v2Result['redirectUrl']]);
+            print $this->returnData['form'];
+            return true;
+        }
+        $this->writeLog(['3DSCheckResult' => 'Card issuer bank wants to identify cardholder (challenge)', '3DSChallengeUrl_ERROR' => 'Missing redirect URL']);
+        return false;
+    }
 }

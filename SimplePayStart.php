@@ -21,15 +21,13 @@ namespace Itegration\OtpSimplePaySdk;
 class SimplePayStart extends Base
 {
     protected $currentInterface = 'start';
-    public    $transactionBase  = [
-        'salt'          => '',
-        'merchant'      => '',
-        'orderRef'      => '',
-        'currency'      => '',
-        'customerEmail' => '',
-        'language'      => '',
-        'sdkVersion'    => '',
-        'methods'       => [],
+    public $transactionBase = [
+        'salt' => '',
+        'merchant' => '',
+        'orderRef' => '',
+        'currency' => '',
+        'sdkVersion' => '',
+        'methods' => [],
     ];
 
     /**
