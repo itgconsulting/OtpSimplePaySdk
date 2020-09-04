@@ -32,6 +32,10 @@ trait Logger
      */
     public function writeLog($log = [])
     {
+        if (!$this->config['logger']) {
+            return false;
+        }
+
         $write = true;
         if (count($log) == 0) {
             $log = $this->logContent;
@@ -57,10 +61,6 @@ trait Logger
 
         if ($write) {
             $flat = $this->getFlatArray($log);
-            if (isset($flat['cardSecret'])) {
-                unset($flat['cardSecret']);
-            }
-
             $logText = '';
             foreach ($flat as $key => $value) {
                 $logText .= $this->logOrderRef . $this->logSeparator;
@@ -68,14 +68,46 @@ trait Logger
                 $logText .= $this->currentInterface . $this->logSeparator;
                 $logText .= $date . $this->logSeparator;
                 $logText .= $key . $this->logSeparator;
-                $logText .= $value . "\n";
+                $logText .= $this->contentFilter($key, $value) . "\n";
             }
-
             $this->logToFile($logFile, $logText);
             unset($log, $flat, $logText);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Remove card data from log content
+     *
+     * @param string $key   Log data key
+     * @param string $value Log data value
+     *
+     * @return string  $logValue New log value
+     */
+    protected function contentFilter($key = '', $value = '')
+    {
+        $logValue = $value;
+        $filtered = '***';
+        if (in_array($key, ['content', 'sendContent'])) {
+            $contentData = $this->convertToArray(json_decode($value));
+            if (isset($contentData['cardData'])) {
+                foreach (array_keys($contentData['cardData']) as $dataKey) {
+                    $contentData['cardData'][$dataKey] = $filtered;
+                }
+            }
+            if (isset($contentData['cardSecret'])) {
+                $contentData['cardSecret'] = $filtered;
+            }
+            $logValue = json_encode($contentData);
+        }
+        if (strpos($key, 'cardData') !== false) {
+            $logValue = $filtered;
+        }
+        if ($key === 'cardSecret') {
+            $logValue = $filtered;
+        }
+        return $logValue;
     }
 
     /**
@@ -97,5 +129,4 @@ trait Logger
         }
         unset($logFile, $logText);
     }
-
 }

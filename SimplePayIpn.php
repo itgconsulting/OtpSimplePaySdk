@@ -23,12 +23,12 @@ use Exception;
 class SimplePayIpn extends Base
 {
     protected $currentInterface = 'ipn';
-    protected $returnData       = [];
-    protected $receiveDate      = '';
-    protected $ipnContent       = [];
-    protected $responseContent  = '';
-    protected $ipnReturnData    = [];
-    public    $validationResult = false;
+    protected $returnData = [];
+    protected $receiveDate = '';
+    protected $ipnContent = [];
+    protected $responseContent = '';
+    protected $ipnReturnData = [];
+    public $validationResult = false;
 
     /**
      * IPN validation
@@ -75,7 +75,6 @@ class SimplePayIpn extends Base
 
         $this->logTransactionId = $this->ipnContent['transactionId'];
         $this->logOrderRef = $this->ipnContent['orderRef'];
-        $this->writeLog(['validationResult' => $this->validationResult]);
 
         foreach ($this->ipnContent as $contentKey => $contentValue) {
             $this->logContent[$contentKey] = $contentValue;
@@ -133,5 +132,4 @@ class SimplePayIpn extends Base
         $this->writeLog(['ipnConfirm' => 'ipnReturnData provided as content by getIpnConfirmContent']);
         return $this->ipnReturnData;
     }
-
 }

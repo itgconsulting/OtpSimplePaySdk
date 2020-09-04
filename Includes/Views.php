@@ -21,9 +21,9 @@ namespace Itegration\OtpSimplePaySdk\Includes;
 trait Views
 {
     public $formDetails = [
-        'id'          => 'SimplePayForm',
-        'name'        => 'SimplePayForm',
-        'element'     => 'button',
+        'id' => 'SimplePayForm',
+        'name' => 'SimplePayForm',
+        'element' => 'button',
         'elementText' => 'Start SimplePay Payment',
     ];
 
@@ -40,17 +40,17 @@ trait Views
     {
         switch ($submitElement) {
             case 'link':
-                $element = "\n<a href='javascript:document.getElementById(\"" . $formName . "\").submit()'>" . addslashes($submitElementText) . "</a>";
+                $element = "\n<a href='javascript:document.getElementById(\"" . $formName ."\").submit()'>".addslashes($submitElementText)."</a>";
                 break;
             case 'button':
-                $element = "\n<button type='submit'>" . addslashes($submitElementText) . "</button>";
+                $element = "\n<button type='submit'>".addslashes($submitElementText)."</button>";
                 break;
             case 'auto':
-                $element = "\n<button type='submit'>" . addslashes($submitElementText) . "</button>";
+                $element = "\n<button type='submit'>".addslashes($submitElementText)."</button>";
                 $element .= "\n<script language=\"javascript\" type=\"text/javascript\">document.getElementById(\"" . $formName . "\").submit();</script>";
                 break;
             default :
-                $element = "\n<button type='submit'>" . addslashes($submitElementText) . "</button>";
+                $element = "\n<button type='submit'>".addslashes($submitElementText)."</button>";
                 break;
         }
         return $element;

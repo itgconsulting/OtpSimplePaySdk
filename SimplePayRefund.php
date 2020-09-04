@@ -21,13 +21,13 @@ namespace Itegration\OtpSimplePaySdk;
 class SimplePayRefund extends Base
 {
     protected $currentInterface = 'refund';
-    protected $returnData       = [];
-    public    $transactionBase  = [
-        'salt'          => '',
-        'merchant'      => '',
-        'orderRef'      => '',
+    protected $returnData = [];
+    public $transactionBase = [
+        'salt' => '',
+        'merchant' => '',
+        'orderRef' => '',
         'transactionId' => '',
-        'currency'      => '',
+        'currency' => '',
     ];
 
     /**
