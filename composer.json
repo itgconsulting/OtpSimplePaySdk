@@ -1,6 +1,7 @@
 {
   "name": "itegration/otp_simple_pay_sdk",
   "description": "OTP simple pay sdk",
+  "version": "1.4",
   "type": "library",
   "license": "MIT",
   "authors": [
