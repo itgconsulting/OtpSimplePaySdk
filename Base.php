@@ -1,7 +1,8 @@
 <?php
 /**
- * Copyright ©2019 Itegration Ltd., Inc. All rights reserved.
+ * Copyright ©2022 ItgCommerce Ltd., Inc. All rights reserved.
  * See COPYING.txt for license details.
+ *
  * @author: Perencz Tamás <tamas.perencz@itegraion.com>
  */
 
@@ -214,12 +215,13 @@ class Base
             $json =  json_encode($data);
         }
         //json
-        $result = @json_decode($data);
+        $result = is_string($data) ? @json_decode($data) : null;
         if ($result !== null) {
             $json =  $data;
         }
         //serialized
-        $result = @unserialize($data);
+        $result = is_string($data) ?  @unserialize($data) : false;
+
         if ($result !== false) {
             $json =  json_encode($result);
         }
